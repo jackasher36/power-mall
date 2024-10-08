@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: member-service
+  cloud:
+    nacos:
+      server-addr: 192.168.26.141:8848
+      username: nacos
+      password: nacos
+      discovery:
+        namespace: 3fe590e0-91a7-4926-91e3-8bc86e78b4d8
+        group: A_GROUP
+        service: ${spring.application.name}
+      config:
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+        group: ${spring.cloud.nacos.discovery.group}
+        prefix: ${spring.application.name}
+        file-extension: yml
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  profiles:
+    active: dev
+
+################### 远程配置文件内容 ###############
+#server:
+#  port: 8084
+#swagger3:
+#  base-package: com.powernode.controller
+#  name: bjpowernode
+#  url: https://www.bjpowernode.com
+#  email: bjpowernode@126.com
+#  title: 后台管理系统-会员管理模块接口
+#  description: 实现后台管理系统的所有接口,根路径/member-service
+#  license: bjpowernode
+#  licenseUrl: https://www.bjpowernode.com
+#  terms-of-service-url: https://www.bjpowernode.com
+#  version: 1.0
+#aliyun:
+#  dx:
+#    accessKeyID:
+#    accessKeySecret:
+#    signName: IT汇
+#    templateCode: SMS_464070277
+#    endpoint: dysmsapi.aliyuncs.com

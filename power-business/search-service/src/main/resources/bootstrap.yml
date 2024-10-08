@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: search-service
+  cloud:
+    nacos:
+      server-addr: 192.168.26.141:8848
+      username: nacos
+      password: nacos
+      discovery:
+        namespace: 3fe590e0-91a7-4926-91e3-8bc86e78b4d8
+        group: A_GROUP
+        service: ${spring.application.name}
+      config:
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+        group: ${spring.cloud.nacos.discovery.group}
+        prefix: ${spring.application.name}
+        file-extension: yml
+        shared-configs:
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  profiles:
+    active: dev
+####################### nacos远程配置中心文件内容 #########################
+#server:
+#  port: 8086
+#swagger3:
+#  base-package: com.powernode.controller
+#  name: bjpowernode
+#  url: https://www.bjpowernode.com
+#  email: bjpowernode@126.com
+#  title: 商城用户购物系统-搜索业务管理模块接口
+#  description: 实现商城用户购物系统的所有接口,根路径/search-service
+#  license: bjpowernode
+#  licenseUrl: https://www.bjpowernode.com
+#  terms-of-service-url: https://www.bjpowernode.com
+#  version: 1.0

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.powernode.mapper.IndexImgMapper">
+  <resultMap id="BaseResultMap" type="com.powernode.domain.IndexImg">
+    <!--@mbg.generated-->
+    <!--@Table index_img-->
+    <id column="img_id" jdbcType="BIGINT" property="imgId" />
+    <result column="shop_id" jdbcType="BIGINT" property="shopId" />
+    <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="des" jdbcType="VARCHAR" property="des" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="link" jdbcType="VARCHAR" property="link" />
+    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="seq" jdbcType="INTEGER" property="seq" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="prod_id" jdbcType="BIGINT" property="prodId" />
+    <result column="type" jdbcType="BOOLEAN" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    img_id, shop_id, img_url, des, title, link, `status`, seq, create_time, prod_id, 
+    `type`
+  </sql>
+</mapper>

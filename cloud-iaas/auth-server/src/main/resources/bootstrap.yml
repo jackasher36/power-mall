@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: auth-server # 微服务名称
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+      username: nacos
+      password: nacos
+      discovery:  # 配置nacos注册中心
+        namespace: d8e857f1-d010-41d3-9317-0dd40153e3c4
+        group: A_GROUP
+        service: ${spring.application.name}
+      config: # 配置nacos配置中心
+        namespace: ${spring.cloud.nacos.discovery.namespace}
+        group: ${spring.cloud.nacos.discovery.group}
+        prefix: ${spring.application.name}
+        file-extension: yml
+        shared-configs:   # 配置共享配置文件
+          - application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+  profiles: # 多环境配置
+    active: dev
+
+
+###################### nacos远程配置中心配置文件内容####################
+#server:
+#  port: 9999
+#wx:
+#  appid: wxcfa9d409c6937d8f
+#  secret: bbb7308cfb3165480d47a6b21a5c0d3e
+#  url: https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code
+#  pwd: $2a$10$Q9Z7w/s59CV07YNDpjQKbegSoiqAKji8VHJvDgShU2pDUY2kjdywa
+
+##################### nacos远程配置中心，项目公共配置文件内容 ##################
+#spring:
+#  datasource:   # 配置连接数据库
+#    druid:
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://8.137.145.18:3306/mall?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8
+#      username: root
+#      password: 123456
+#  redis:  # 配置redis
+#    host: 8.137.145.18
+#    port: 6379
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher # 指定路径配置策略
+#    format: # 接收日期参数格式
+#      date: yyyy-MM-dd HH:mm:ss
+#  jackson:  # springmvc中设置响应日期格式
+#    date-format: yyyy-MM-dd HH:mm:ss
+#    time-zone: GMT+8  # 设置时区
+#mybatis-plus:
+#  mapper-locations: classpath*:/mapper/**/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
