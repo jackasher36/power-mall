@@ -104,13 +104,11 @@ public class ProdPropServiceImpl extends ServiceImpl<ProdPropMapper, ProdProp> i
     @CacheEvict(key = ProductConstants.PROD_PROP_KEY)
     @Transactional(rollbackFor = Exception.class)
     public Boolean modifyProdSpec(ProdProp prodProp) {
-        // 获取新的属性值对象集合
-        List<ProdPropValue> prodPropValues = prodProp.getProdPropValues();
-        // 批量修改属性值对象
-        boolean flag = prodPropValueService.updateBatchById(prodPropValues);
+        //删除原有的 prop 属性
+        Boolean flag = removeProdSpecByPropId(prodProp.getPropId());
         if (flag) {
-            // 修改属性对象
-            prodPropMapper.updateById(prodProp);
+            // 增加 prop
+            saveProdSpec(prodProp);
         }
         return flag;
     }

@@ -36,6 +36,8 @@ public class MemberLoginStrategy implements LoginStrategy {
     @Override
     public UserDetails realLogin(String username) {
 
+        System.out.println("进入微信验证");
+
         // 调用微信接口服务器中的：登录凭证校验接口（appid,appsecret,code）
 //        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
         // 获取登录凭证校验接口url
@@ -50,6 +52,7 @@ public class MemberLoginStrategy implements LoginStrategy {
         JSONObject jsonObject = JSONObject.parseObject(jsonStr);
         // 获取openid
         String openid = jsonObject.getString("openid");
+        System.out.println("openid:" + openid);
         // 判断是否有值
         if (!StringUtils.hasText(openid)) {
             throw new InternalAuthenticationServiceException("登录异常，请重试");

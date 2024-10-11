@@ -106,6 +106,7 @@ public class MemberAddrController {
     ////////////////////// feign 接口 /////////////////////////////
     @GetMapping("getMemberAddrById")
     public Result<MemberAddr> getMemberAddrById(@RequestParam Long addrId) {
+        System.out.println("getMemberAddrById 被 Openfeign 调用了!!!");
         MemberAddr memberAddr = memberAddrService.getById(addrId);
         return Result.success(memberAddr);
     }

@@ -8,6 +8,7 @@ import com.powernode.domain.LoginSysUser;
 import com.powernode.mapper.LoginSysUserMapper;
 import com.powernode.model.SecurityUser;
 import com.powernode.strategy.LoginStrategy;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import java.util.Set;
 /**
  * 商城后台管理系统登录策略的具体实现
  */
+@Slf4j
 @Service(AuthConstants.SYS_USER_LOGIN)
 public class SysUserLoginStrategy implements LoginStrategy {
 
@@ -25,7 +27,7 @@ public class SysUserLoginStrategy implements LoginStrategy {
 
     @Override
     public UserDetails realLogin(String username) {
-        System.out.println("进入realLogin");
+        System.out.println("进入realLogin" + username);
         // 根据用户名称查询用户对象
         LoginSysUser loginSysUser = loginSysUserMapper.selectOne(new LambdaQueryWrapper<LoginSysUser>()
                 .eq(LoginSysUser::getUsername, username)
@@ -33,6 +35,8 @@ public class SysUserLoginStrategy implements LoginStrategy {
         /*LoginSysUser loginSysUser = loginSysUserMapper.selectOne(new QueryWrapper<LoginSysUser>()
                 .eq("username", username)
         );*/
+
+        System.out.println("loginSysUser: " + loginSysUser);
         if (ObjectUtil.isNotNull(loginSysUser)) {
             // 根据用户标识查询用户的权限集合
             Set<String> perms = loginSysUserMapper.selectPermsByUserId(loginSysUser.getUserId());

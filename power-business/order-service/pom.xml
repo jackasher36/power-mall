@@ -37,16 +37,18 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid-spring-boot-starter</artifactId>
         </dependency>
+
         <!--sentinel依赖-->
-        <!--<dependency>
+        <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
-        </dependency>-->
+        </dependency>
+
         <!--easyexcel依赖-->
-        <!--<dependency>
+        <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
-        </dependency>-->
+        </dependency>
         <!--rabbitmq依赖-->
         <dependency>
             <groupId>org.springframework.boot</groupId>

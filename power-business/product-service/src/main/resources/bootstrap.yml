@@ -3,11 +3,11 @@ spring:
     name: product-service
   cloud:
     nacos:
-      server-addr: 192.168.26.141:8848
+      server-addr: 127.0.0.1:8848
       username: nacos
       password: nacos
       discovery:
-        namespace: 3fe590e0-91a7-4926-91e3-8bc86e78b4d8
+        namespace: d8e857f1-d010-41d3-9317-0dd40153e3c4
         group: A_GROUP
         service: ${spring.application.name}
       config:
