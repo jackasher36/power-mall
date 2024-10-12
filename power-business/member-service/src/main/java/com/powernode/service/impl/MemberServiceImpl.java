@@ -19,8 +19,8 @@ public class MemberServiceImpl extends ServiceImpl<MemberMapper, Member> impleme
         // 获取会员的openid
         String openId = AuthUtils.getMemberOpenId();
         // 更新会员的头像和昵称
-        return memberMapper.update(member,new LambdaUpdateWrapper<Member>()
-                .eq(Member::getOpenId,openId)
-        )>0;
+        return memberMapper.update(member, new LambdaUpdateWrapper<Member>()
+                .eq(Member::getOpenId, openId)
+        ) > 0;
     }
 }
