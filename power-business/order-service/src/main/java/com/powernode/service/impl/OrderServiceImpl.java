@@ -280,6 +280,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @param orderVo
      */
     private void cartToOrderConfirm(List<Long> basketIds, OrderVo orderVo) {
+        /**
+         * 购物车id -> 购物车记录 -> 购物车商品数量
+         */
+
         // 判断购物车id是否有值
         if (CollectionUtils.isEmpty(basketIds) || basketIds.size() == 0) {
             return;
@@ -377,6 +381,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @param orderVo
      */
     private void productToOrderConfirm(OrderItem orderItem, OrderVo orderVo) {
+
+        /**
+         * 初始化订单店铺对象集合
+         */
         Long shopId = orderItem.getShopId();
         // 创建订单店铺对象集合
         List<ShopOrder> shopOrderList = new ArrayList<>();
@@ -385,6 +393,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 创建订单商品条目对象集合
         List<OrderItem> orderItemList = new ArrayList<>();
 
+        /**
+         * 获取 sku 对象
+         */
         // 获取商品skuId
         Long skuId = orderItem.getSkuId();
         // 远程调用：根据商品skuId查询商品sku对象
@@ -402,7 +413,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 计算单个商品总金额
         BigDecimal oneSkuTotalAmount = sku.getPrice().multiply(new BigDecimal(prodCount));
 
-
+        /**
+         * 封装订单商品条目对象
+         */
         // 给订单商品条目对象属性赋值
         orderItem.setShopId(shopId);
         orderItem.setCreateTime(new Date());
@@ -411,11 +424,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // 将商品sku对象的属性值copy到订单商品条目对象中去
         BeanUtils.copyProperties(sku, orderItem);
 
+        /**
+         * 封装订单店铺对象集合
+         */
         orderItemList.add(orderItem);
         shopOrder.setShopId(shopId);
         shopOrder.setShopOrderItems(orderItemList);
         shopOrderList.add(shopOrder);
 
+        /**
+         * 封装订单确认页面对象
+         */
         // 补充订单确认页面对象数据
         orderVo.setShopCartOrders(shopOrderList);
         orderVo.setTotal(oneSkuTotalAmount);
@@ -509,65 +528,87 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
      * @return
      */
     private ChangeStock changeProdAndSkuStock(OrderVo orderVo) {
-        // 创建商品prod购买数量对象集合
-        List<ProdChange> prodChangeList = new ArrayList<>();
-        // 创建商品sku购买数量对象集合
-        List<SkuChange> skuChangeList = new ArrayList<>();
-        // 获取订单店铺对象集合
-        List<ShopOrder> shopOrderList = orderVo.getShopCartOrders();
-        // 循环遍历订单店铺对象集合
-        shopOrderList.forEach(shopOrder -> {
-            // 获取店铺的订单商品条目对象集合
-            List<OrderItem> orderItemList = shopOrder.getShopOrderItems();
-            // 循环订单商品条目对象集合
-            orderItemList.forEach(orderItem -> {
-                // 获取商品prodId
-                Long prodId = orderItem.getProdId();
-                // 获取商品skuId
-                Long skuId = orderItem.getSkuId();
-                // 获取商品购买数量
-                Integer prodCount = orderItem.getProdCount()*-1;
 
-                // 判断当前商品prodId是否在prodChangeList集合中出现过
-                List<ProdChange> oneProdChange = prodChangeList.stream()
-                        .filter(prodChange -> prodChange.getProdId().equals(prodId))
-                        .collect(Collectors.toList());
-                if (CollectionUtils.isEmpty(oneProdChange) || oneProdChange.size() == 0) {
-                    // 说明：当前订单商品条目对象的商品prodId没有出现过
-                    // 创建商品prod购买数量对象
-                    ProdChange prodChange = new ProdChange(prodId, prodCount);
-                    // 创建商品sku购买数量对象
-                    SkuChange skuChange = new SkuChange(skuId, prodCount);
+        try{
+            /**
+             * 封装修改商品prod和sku库存数量对象
+             */
+            // 创建商品prod购买数量对象集合
+            List<ProdChange> prodChangeList = new ArrayList<>();
+            // 创建商品sku购买数量对象集合
+            List<SkuChange> skuChangeList = new ArrayList<>();
+            // 获取订单店铺对象集合
+            List<ShopOrder> shopOrderList = orderVo.getShopCartOrders();
 
-                    prodChangeList.add(prodChange);
-                    skuChangeList.add(skuChange);
-                } else {
-                    // 说明：当前订单商品条目对象的商品prodId在之前出现过
-                    // 获取之前商品prodChange
-                    ProdChange beforeProdChange = oneProdChange.get(0);
-                    // 计算商品prod一共购买的数量
-                    int finalCount = beforeProdChange.getCount() + prodCount;
-                    beforeProdChange.setCount(finalCount);
-                    // 创建商品sku购买数量对象
-                    SkuChange skuChange = new SkuChange(skuId,prodCount);
-                    skuChangeList.add(skuChange);
-                }
+            System.out.println("shopOrderList:" + shopOrderList);
+
+            // 空值检查
+            if (orderVo == null || orderVo.getShopCartOrders() == null) {
+                throw new IllegalArgumentException("订单信息不能为空");
+            }
+
+            // 循环遍历订单店铺对象集合
+            shopOrderList.forEach(shopOrder -> {
+                // 获取店铺的订单商品条目对象集合
+                List<OrderItem> orderItemList = shopOrder.getShopOrderItems();
+                // 循环订单商品条目对象集合
+                orderItemList.forEach(orderItem -> {
+                    // 获取商品prodId
+                    Long prodId = orderItem.getProdId();
+                    // 获取商品skuId
+                    Long skuId = orderItem.getSkuId();
+                    // 获取商品购买数量
+                    Integer prodCount = orderItem.getProdCount()*-1;
+
+                    System.out.println("prodChangeList:" + prodChangeList);
+
+                    // 判断当前商品prodId是否在prodChangeList集合中出现过
+                    List<ProdChange> oneProdChange = prodChangeList.stream()
+                            .filter(prodChange -> prodChange.getProdId().equals(prodId))
+                            .collect(Collectors.toList());
+
+                    System.out.println("oneProdChange:" + oneProdChange);
+
+                    if (CollectionUtils.isEmpty(oneProdChange) || oneProdChange.size() == 0) {
+                        // 说明：当前订单商品条目对象的商品prodId没有出现过
+                        // 创建商品prod购买数量对象
+                        ProdChange prodChange = new ProdChange(prodId, prodCount);
+                        // 创建商品sku购买数量对象
+                        SkuChange skuChange = new SkuChange(skuId, prodCount);
+
+                        prodChangeList.add(prodChange);
+                        skuChangeList.add(skuChange);
+                    } else {
+                        // 说明：当前订单商品条目对象的商品prodId在之前出现过
+                        // 获取之前商品prodChange
+                        ProdChange beforeProdChange = oneProdChange.get(0);
+                        // 计算商品prod一共购买的数量
+                        int finalCount = beforeProdChange.getCount() + prodCount;
+                        beforeProdChange.setCount(finalCount);
+                        // 创建商品sku购买数量对象
+                        SkuChange skuChange = new SkuChange(skuId,prodCount);
+                        skuChangeList.add(skuChange);
+                    }
+                });
             });
-        });
 
-        // 创建商品购买数量对象
-        ChangeStock changeStock = new ChangeStock(prodChangeList, skuChangeList);
-        // 远程调用：修改商品prod和sku库存数量
-        Result<Boolean> result = orderProdFeign.changeProdAndSkuStock(changeStock);
-        // 判断操作结果
-        if (result.getCode().equals(BusinessEnum.OPERATION_FAIL.getCode())) {
-            throw new BusinessException("远程调用：修改商品prod和sku库存数量失败");
+            // 创建商品购买数量对象
+            ChangeStock changeStock = new ChangeStock(prodChangeList, skuChangeList);
+            // 远程调用：修改商品prod和sku库存数量
+            Result<Boolean> result = orderProdFeign.changeProdAndSkuStock(changeStock);
+            // 判断操作结果
+            if (result.getCode().equals(BusinessEnum.OPERATION_FAIL.getCode())) {
+                throw new BusinessException("远程调用：修改商品prod和sku库存数量失败");
+            }
+            Boolean resultData = result.getData();
+            if (!resultData) {
+                throw new BusinessException("远程调用：修改商品prod和sku库存数量失败");
+            }
+            return changeStock;
+        }catch (Exception e){
+            throw new BusinessException("远程调用：修改商品prod和sku的库存数量 非 Openfeign失败");
         }
-        Boolean resultData = result.getData();
-        if (!resultData) {
-            throw new BusinessException("远程调用：修改商品prod和sku库存数量失败");
-        }
-        return changeStock;
+
     }
 
     /**
